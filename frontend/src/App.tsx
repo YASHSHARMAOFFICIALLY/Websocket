@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import "./index.css";
 
 type Status = "connecting" | "Open" | "closed";
@@ -34,7 +36,7 @@ export function App() {
 
   if (status !== "Open") {
     return (
-      <div style={{ padding: 24, fontFamily: "system-ui" }}>
+      <div className="flex min-h-screen items-center justify-center bg-background p-6 text-muted-foreground">
         {status === "connecting"
           ? "Connecting…"
           : "Disconnected — is the backend running on :8080?"}
@@ -43,43 +45,45 @@ export function App() {
   }
 
   return (
-    <div style={{ padding: 24, fontFamily: "system-ui", maxWidth: 480 }}>
-      <h2>Chat (connected)</h2>
+    <div className="flex min-h-screen items-center justify-center bg-background p-6">
+      <div className="flex w-full max-w-md flex-col rounded-xl border bg-card text-card-foreground shadow-sm">
+        <header className="flex items-center gap-2 border-b px-4 py-3">
+          <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
+          <h2 className="text-sm font-semibold">Chat — connected</h2>
+        </header>
 
-      <div
-        style={{
-          border: "1px solid #ccc",
-          borderRadius: 8,
-          height: 280,
-          overflowY: "auto",
-          padding: 12,
-          marginBottom: 12,
-        }}
-      >
-        {messages.length === 0 ? (
-          <em style={{ color: "#888" }}>No messages yet…</em>
-        ) : (
-          messages.map((msg, i) => <div key={i}>{msg}</div>)
-        )}
+        <div className="h-72 space-y-2 overflow-y-auto p-4">
+          {messages.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No messages yet…</p>
+          ) : (
+            messages.map((msg, i) => (
+              <div
+                key={i}
+                className="w-fit max-w-[85%] rounded-lg bg-muted px-3 py-2 text-sm text-foreground"
+              >
+                {msg}
+              </div>
+            ))
+          )}
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // stop the page reloading on submit
+            sendMessage();
+          }}
+          className="flex gap-2 border-t p-3"
+        >
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message…"
+            aria-label="Message"
+            autoComplete="off"
+          />
+          <Button type="submit">Send</Button>
+        </form>
       </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault(); // stop the page reloading on submit
-          sendMessage();
-        }}
-        style={{ display: "flex", gap: 8 }}
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message…"
-          style={{ flex: 1, padding: 8 }}
-        />
-        <button type="submit" style={{ padding: "8px 16px" }}>
-          Send
-        </button>
-      </form>
     </div>
   );
 }
